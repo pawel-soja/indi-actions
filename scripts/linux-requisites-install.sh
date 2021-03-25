@@ -8,6 +8,8 @@ echo Check os release
 echo Get sudo $(command -v sudo)
 SUDO=$(command -v sudo)
 
+echo "Case $ID"
+
 case $ID in
     debian|ubuntu)
         echo update
@@ -25,3 +27,5 @@ case $ID in
         exit 1
         ;;
 esac
+
+exit 0
