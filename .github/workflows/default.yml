@@ -1,0 +1,77 @@
+name: CI
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        container: ["ubuntu:latest", "debian:latest"]
+
+    container:
+      image: ${{ matrix.container }}
+
+    steps:
+      - name: Container Information
+        id: container-info
+        run: echo ::set-output name=name::$(echo ${{ matrix.container }} | sed 's/[:\\]/-/g')
+
+      # Cache
+      - name: Cache Apt Packages
+        uses: actions/cache@v2
+        with:
+          path: /var/cache/apt
+          key: ${{ runner.os }}-${{ matrix.container }}-apt-package
+
+      - name: Cache GoogleTest Package
+        id: googletest-package-cache
+        uses: actions/cache@v2
+        with:
+          path: packages/googletest-package.tar
+          key: ${{ runner.os }}-${{ matrix.container }}-googletest-package
+
+      # Requisites
+      - name: Get INDI Sources
+        uses: actions/checkout@v2
+        with:
+          path: 'indi'
+
+      - name: Install Pre-requisites
+        run: indi/scripts/linux-requisites-install.sh
+
+      # GoogleTest
+      - name: Build GoogleTest Package
+        if: steps.googletest-package-cache.outputs.cache-hit != 'true'
+        run: |
+          indi/scripts/googletest-build.sh
+          indi/scripts/googletest-package-build.sh
+
+      - name: Install GoogleTest Package
+        run: indi/scripts/googletest-package-install.sh
+
+      # INDI
+      - name: Build INDI Core
+        run: |
+          indi/scripts/indi-core-build.sh
+          indi/scripts/indi-core-package-build.sh
+
+      - name: Install INDI Core
+        run: indi/scripts/indi-core-install.sh
+
+      - name: Run INDI Core Test
+        run: indi/scripts/indi-core-test.sh
+
+      # Artifacts
+      - name: Archive INDI Core Package
+        uses: actions/upload-artifact@v2
+        with:
+          name: indi-core-package-${{ steps.container-info.outputs.name }}
+          path: packages/indi-core-package.tar
