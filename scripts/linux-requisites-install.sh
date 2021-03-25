@@ -11,10 +11,10 @@ SUDO=$(command -v sudo)
 case $ID in
     debian|ubuntu)
         echo update
-        $SUDO apt-get -qq update
+        $SUDO apt-get update
         # $SUDO apt-get -qqy dist-upgrade
         echo install
-        $SUDO apt-get -qqy install \
+        $SUDO apt-get -y install \
             libnova-dev libcfitsio-dev libusb-1.0-0-dev zlib1g-dev \
             libgsl-dev build-essential cmake git libjpeg-dev \
             libcurl4-gnutls-dev libtiff-dev libfftw3-dev
