@@ -7,7 +7,7 @@ echo Check os release
 
 VAR=2
 echo Get sudo $(command -v sudo)
-SUDO2=$(command -v sudo)
+#SUDO2=$(command -v sudo)
 
 echo "Case $ID"
 
