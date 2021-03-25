@@ -2,7 +2,6 @@
 
 set -x -e
 
-echo Check os release
 . /etc/os-release
 
 case $ID in
