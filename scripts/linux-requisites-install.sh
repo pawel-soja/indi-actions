@@ -5,7 +5,7 @@ set -x -e
 echo Check os release
 . /etc/os-release
 
-echo Get sudo ($(command -v sudo))
+echo Get sudo $(command -v sudo)
 SUDO=$(command -v sudo)
 
 case $ID in
