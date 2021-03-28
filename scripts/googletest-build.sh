@@ -2,7 +2,7 @@
 
 set -e
 
-git clone https://github.com/google/googletest.git googletest
+test -d googletest || git clone https://github.com/google/googletest.git googletest
 
 mkdir -p build/googletest
 pushd build/googletest
